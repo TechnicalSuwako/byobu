@@ -1,0 +1,92 @@
+#!/bin/sh -e
+
+__battery_detail() {
+  local bat
+  for bat in /proc/acpi/battery/*; do
+    cat "$bat/info"
+    cat "$bat/state"
+  done
+}
+
+__battery() {
+  local bat line present sign state percent full rem color bcolor
+  present=""; full="0"; rem="0"; state=""
+  case "$(uname)" in
+    OpenBSD)
+        percent=$(apm -l)
+        case $(apm -a) in
+          0) state="discharging";;
+          1) state="charging";;
+          2) state="on-line";;
+        esac
+    ;;
+    Linux)
+      for bat in $BATTERY /sys/class/power_supply/* /proc/acpi/battery/*; do
+       case "$bat" in
+          /sys/*)
+            if [ -r "$bat/uevent" ]; then
+              . "$bat/uevent"
+              case "$POWER_SUPPLY_NAME" in AC|ac|Ac|aC) continue ;; esac
+              present="$POWER_SUPPLY_PRESENT"
+              [ -n "$POWER_SUPPLY_CHARGE_FULL" ] && full=$((POWER_SUPPLY_CHARGE_FULL+full))
+              [ -n "$POWER_SUPPLY_ENERGY_FULL" ] && full=$((POWER_SUPPLY_ENERGY_FULL+full))
+              [ -n "$POWER_SUPPLY_CHARGE_NOW" ] && rem=$((POWER_SUPPLY_CHARGE_NOW+rem))
+              [ -n "$POWER_SUPPLY_ENERGY_NOW" ] && rem=$((POWER_SUPPLY_ENERGY_NOW+rem))
+              if [ -n "$POWER_SUPPLY_CAPACITY" ] && [ ! -n "$POWER_SUPPLY_ENERGY_NOW" ] && [ ! -n "$POWER_SUPPLY_CHARGE_NOW" ]; then
+                rem="$POWER_SUPPLY_CAPACITY" && full="100"
+              fi
+              [ "$POWER_SUPPLY_STATUS" != "Unknown" ] && state="$POWER_SUPPLY_STATUS"
+            fi
+          ;;
+          /proc/*)
+            [ -f "$bat/info" ] || continue
+            while read line; do
+              set -- ${line}
+              case "$line" in
+                present:*)
+                  [ "$2" = "no" ] && continue 2
+                  present="$2";;
+                  last\ full\ capacity:*) full="$4";;
+              esac
+              [ -n "$present" -a -n "$full" ] && break
+            done < "${bat}/info"
+            while read line; do
+              set -- ${line}
+              case "$line" in
+                remaining\ capacity:*) rem="$3";;
+                charging\ state:*) state="$3";;
+              esac
+              [ -n "$rem" -a -n "$state" ] && break
+            done < "$bat/state"
+            [ -n "$full" ] && [ -n "$rem" ] && [ -n "$state" ] && break
+          ;;
+        esac
+      done
+  esac
+
+  if [ $percent -ge 0 ]; then
+    if [ "$percent" -lt 33 ]; then
+      color="R w"
+      bcolor="b R w"
+    elif [ "$percent" -lt 67 ]; then
+      color="Y k"
+      bcolor="b Y k"
+    else
+      color="G k"
+      bcolor="b G k"
+    fi
+    percent="${percent}${PCT}"
+    state=$(printf "%s" "$state" | $BYOBU_SED 'y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/')
+    case $state in
+      charging) sign="+" ;;
+      discharging) sign="-" ;;
+      on-line) sign="=" ;;
+      *) sign="$state" ;;
+    esac
+    if [ -z "$percent" ]; then
+      rm -f "$BYOBU_RUN_DIR/status.$BYOBU_BACKEND/battery"*
+      return
+    fi
+    color $bcolor; printf "%s" "$percent"; color -; color $color; printf "%s" "$sign"; color --
+  fi
+}

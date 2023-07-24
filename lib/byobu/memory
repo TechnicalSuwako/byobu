@@ -1,0 +1,57 @@
+#!/bin/sh -e
+
+__memory_detail() {
+  if [ "$(uname)" = "OpenBSD" -o "$(uname)" = "FreeBSD" ]; then
+    # OpenBSD / FreeBSD
+    top -b -d 1
+  else
+    # Linux
+    free
+  fi
+}
+
+__memory() {
+  local total="" free="" unit_total="" unit_free=""
+  local total_mb=0 free_mb=0 used_mb=0
+
+  case "$(uname)" in
+    Linux)
+      while read -r name value _; do
+        case "$name" in
+          MemTotal:*) total=$((value/1024));;
+          MemFree:*) free=$((value/1024));;
+          Buffers:*) free=$((free + value/1024));;
+          Cached:*) free=$((free + value/1024));;
+        esac
+      done < /proc/meminfo
+      used_mb=$((total - free))
+      ;;
+    OpenBSD)
+      total=$(($(sysctl -n hw.physmem) / 1024 / 1024))
+      used_mb=$(($(vmstat | tail -1 | awk '{print $4}') / 1024))
+      ;;
+    FreeBSD)
+      total=$(($(sysctl -n hw.realmem) / 1024 / 1024))
+      pagesize=$(sysctl -n hw.pagesize)
+      inactive_count=$(sysctl -n vm.stats.vm.v_inactive_count)
+      free_mb=$((inactive_count * pagesize / 1024 / 1024))
+      used_mb=$((total - free_mb))
+      ;;
+  esac
+
+  if [ $total -ge 1024 ]; then
+    total=$(printf "%.1f" $(echo "$total / 1024" | bc -l))
+    unit_total="G"
+  else
+    unit_total="M"
+  fi
+
+  if [ $used_mb -ge 1024 ]; then
+    used_mb=$(printf "%.1f" $(echo "$used_mb / 1024" | bc -l))
+    unit_used="G"
+  else
+    unit_used="M"
+  fi
+
+  color b g W; printf "%s%s" "$used_mb" "$unit_used"; color -; color b g W; printf "/%s%s" "$total" "$unit_total"; color --
+}

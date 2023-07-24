@@ -1,0 +1,44 @@
+#!/bin/sh -e
+
+__release() {
+  local RELEASE="${RELEASE}"
+  if [ -n "$RELEASE" ]; then
+    true
+  elif [ "$(uname)" = "OpenBSD" ]; then
+    # OpenBSD
+    RELEASE=$(uname -r)
+  elif [ "$(uname)" = "FreeBSD" ]; then
+    # FreeBSD
+    RELEASE=$(freebsd-version | cut -d'-' -f1)
+  elif [ -r "/etc/os-release" ]; then
+    if grep -q -E '^(Arch|Artix|Gentoo|Void)' /etc/os-release; then
+      RELEASE="" # ローリングリリースの場合
+    else
+      RELEASE=$(. /etc/os-release && echo "$VERSION")
+    fi
+  elif [ -r "/etc/issue" ]; then
+    local issue
+    read issue < /etc/issue
+    case "$issue" in
+      Ubuntu*)
+        set -- $issue;
+        RELEASE="$2";
+      ;;
+      Debian*)
+        local ver
+        read ver < /etc/debian_version
+        RELEASE="$ver"
+      ;;
+    esac
+  elif eval $BYOBU_TEST sw_vers >/dev/null 2>&1; then
+    RELEASE="$(sw_vers -productVersion)"
+  fi
+  if [ -z "$RELEASE" ] && eval $BYOBU_TEST lsb_release >/dev/null 2>&1; then
+    RELEASE=$(lsb_release -s -r)
+  fi
+  if [ -n "$RELEASE_ABBREVIATED" ] && [ $RELEASE_ABBREVIATED -gt 0 ]; then
+    color bold2; printf "%.${RELEASE_ABBREVIATED}s" "$RELEASE"; color --
+  else
+    color bold2; printf "%s" "$RELEASE"; color --
+  fi
+}

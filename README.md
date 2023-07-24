@@ -1,0 +1,1 @@
+元のbyobuはDebian向けらしい、だからArtix、CRUX、OpenBSD、及びFreeBSDでもうまく機能している間で変更した
