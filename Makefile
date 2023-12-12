@@ -1,4 +1,5 @@
 NAME=byobu
+VERSION=5.2
 # Linux = /usr, FreeBSD/OpenBSD = /usr/local, NetBSD = /usr/pkg
 PREFIX=/usr
 MANPREFIX=${PREFIX}/share/man
@@ -13,10 +14,13 @@ install: all
 	cp -f share/man/man1/${NAME}.1 ${DESTDIR}${MANPREFIX}/man1
 	chmod 644 ${DESTDIR}${MANPREFIX}/man1/${NAME}.1
 
+dist:
+	tar zcfv ${NAME}-${VERSION} README.md bin share lib Makefile CHANGELOG.md
+
 uninstall:
 	rm -f ${DESTDIOR}${PREFIX}/bin/${NAME}*\
 		${DESTDIR}${PREFIX}/lib/${NAME} \
 		${DESTDIR}${PREFIX}/share/${NAME} \
 		${DESTDIR}${MANPREFIX}/man1/${NAME}.1
 
-.PHONY:install uninstall
+.PHONY:install dist uninstall
