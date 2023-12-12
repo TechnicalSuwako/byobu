@@ -1,4 +1,3 @@
-#!/bin/sh -e
 __cpu_freq_detail() {
   cat /proc/cpuinfo
 }
@@ -45,6 +44,7 @@ __cpu_freq() {
       unit="MHz"
     fi
   fi
+
   [ -n "$freq" ] || return
   color c W; printf "%s" "${cores}x"; color b c W; printf "%s" "$freq"; color -; color c W; printf "%s" "$unit"; color --
 }

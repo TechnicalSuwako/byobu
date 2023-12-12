@@ -13,8 +13,10 @@ __release() {
   elif [ -r "/etc/os-release" ]; then
     if grep -q -E '^(Arch|Artix|Gentoo|Void)' /etc/os-release; then
       RELEASE="" # ローリングリリースの場合
-    else
+    elif grep -q -E '^ID=crux' /etc/os-release; then
       RELEASE=$(. /etc/os-release && echo "$VERSION")
+    else
+      RELEASE=$(. /etc/os-release && echo "$VERSION_ID")
     fi
   elif [ -r "/etc/issue" ]; then
     local issue
@@ -23,12 +25,12 @@ __release() {
       Ubuntu*)
         set -- $issue;
         RELEASE="$2";
-      ;;
+        ;;
       Debian*)
         local ver
         read ver < /etc/debian_version
         RELEASE="$ver"
-      ;;
+        ;;
     esac
   elif eval $BYOBU_TEST sw_vers >/dev/null 2>&1; then
     RELEASE="$(sw_vers -productVersion)"

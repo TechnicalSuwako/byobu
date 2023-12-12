@@ -28,7 +28,7 @@ __memory() {
       ;;
     OpenBSD)
       total=$(($(sysctl -n hw.physmem) / 1024 / 1024))
-      used_mb=$(($(vmstat | tail -1 | awk '{print $4}') / 1024))
+      used_mb=$(vmstat | tail -1 | awk '{print substr($3, 1, length($3)-1)}')
       ;;
     FreeBSD)
       total=$(($(sysctl -n hw.realmem) / 1024 / 1024))

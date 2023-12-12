@@ -18,7 +18,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-VERSION=5.133
+VERSION=5.2
 PKG="byobu"
 
 # All sorts of things go wrong if you don't own your $HOME dir.
@@ -33,21 +33,21 @@ if [ ! -O "$HOME" ]; then
 fi
 
 # Source local byobu config
-if [ -r "$HOME/.byoburc" ]; then
+if [ -r "$HOME/.config/byoburc" ]; then
 	# Ensure that this configuration is usable
-	. "$HOME/.byoburc" || mv -f "$HOME/.byoburc" "$HOME/.byoburc".orig
+	. "$HOME/.config/byoburc" || mv -f "$HOME/.config/byoburc" "$HOME/.config/byoburc".orig
 fi
 if [ -z "${BYOBU_PREFIX}" ]; then
 	# Find and export the installation location prefix
 	greadlink -f . >/dev/null 2>&1 && export BYOBU_READLINK="greadlink" || export BYOBU_READLINK="readlink"
 	prefix="$(dirname $(dirname $($BYOBU_READLINK -f $0)))"
 	if [ "$prefix" != "/usr" ]; then
-		echo "export BYOBU_PREFIX='$prefix'" >> "$HOME/.byoburc"
-		. "$HOME/.byoburc"
+		echo "export BYOBU_PREFIX='$prefix'" >> "$HOME/.config/byoburc"
+		. "$HOME/.config/byoburc"
 	fi
 fi
 export BYOBU_CHARMAP=$(locale charmap)
-[ -r "$HOME/.byoburc" ] && . "$HOME/.byoburc"
+[ -r "$HOME/.config/byoburc" ] && . "$HOME/.config/byoburc"
 [ -z "${BYOBU_PREFIX}" ] && export BYOBU_PREFIX="/usr" || export BYOBU_PREFIX
 . "${BYOBU_PREFIX}/lib/${PKG}/include/common"
 

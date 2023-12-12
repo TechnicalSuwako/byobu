@@ -49,7 +49,7 @@ except Exception:
 PKG = "byobu"
 HOME = os.getenv("HOME")
 USER = os.getenv("USER")
-BYOBU_CONFIG_DIR = os.getenv("BYOBU_CONFIG_DIR", HOME + "/.byobu")
+BYOBU_CONFIG_DIR = os.getenv("BYOBU_CONFIG_DIR", HOME + "/.config/byobu")
 BYOBU_RUN_DIR = os.getenv("BYOBU_RUN_DIR", HOME + "/.cache/byobu")
 BYOBU_BACKEND = os.getenv("BYOBU_BACKEND", "tmux")
 BYOBU_SOCKETDIR = os.getenv("SOCKETDIR", "/var/run/screen")

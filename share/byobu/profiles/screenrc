@@ -2,7 +2,7 @@
 #    Load:
 #     * the stock byobu profile
 #     * any windows
-#     * and the local .screenrc (instead of .byoburc)
+#     * and the local .screenrc (instead of .config/byoburc)
 #    Used at startup but not profile refresh
 #
 #    Copyright (C) 2009-2011 Canonical Ltd.

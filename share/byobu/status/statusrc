@@ -2,7 +2,7 @@
 #
 #      Override these in $BYOBU_CONFIG_DIR/statusrc
 #      where BYOBU_CONFIG_DIR is XDG_CONFIG_HOME if defined,
-#      and $HOME/.byobu otherwise.
+#      and $HOME/.config/byobu otherwise.
 #
 #    Copyright (C) 2009-2011 Canonical Ltd.
 #
