@@ -15,7 +15,10 @@ install: all
 	chmod 644 ${DESTDIR}${MANPREFIX}/man1/${NAME}.1
 
 dist:
-	tar zcfv ${NAME}-${VERSION} README.md bin share lib Makefile CHANGELOG.md
+	mkdir ${NAME}-${VERSION}
+	cp -r README.md bin share lib Makefile CHANGELOG.md ${NAME}-${VERSION}
+	tar zcfv ${NAME}-${VERSION}.tar.gz ${NAME}-${VERSION}
+	rm -rf ${NAME}-${VERSION}
 
 uninstall:
 	rm -f ${DESTDIOR}${PREFIX}/bin/${NAME}*\
