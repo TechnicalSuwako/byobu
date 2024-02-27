@@ -1,17 +1,31 @@
-NAME=byobu
-VERSION=5.2
-# Linux = /usr, FreeBSD/OpenBSD = /usr/local, NetBSD = /usr/pkg
-PREFIX=/usr
-MANPREFIX=${PREFIX}/share/man
+UNAME_S := $(shell uname -s)
 
-install: all
+NAME=byobu
+VERSION=5.3
+# Linux = /usr, FreeBSD/OpenBSD/macOS = /usr/local, NetBSD = /usr/pkg
+PREFIX=/usr/local
+MANPREFIX=${PREFIX}/share/man
+ifeq ($(UNAME_S),Linux)
+	PREFIX=/usr
+endif
+ifeq ($(UNAME_S),Illumos)
+	PREFIX=/usr
+endif
+ifeq ($(UNAME_S),NetBSD)
+	PREFIX=/usr/pkg
+endif
+ifeq ($(UNAME_S),OpenBSD)
+	MANPREFIX=${PREFIX}/man
+endif
+
+install:
 	mkdir -p ${DESTDIR}${PREFIX}/{bin,lib/${NAME},share/${NAME},share/man/man1}
-	cp -f bin/* ${DESTDIR}${PREFIX}/bin
-	cp -f lib/${NAME}/* ${DESTDIR}${PREFIX}/lib
-	cp -f share/${NAME}/* ${DESTDIR}${PREFIX}/share
+	cp -rf bin/* ${DESTDIR}${PREFIX}/bin
+	cp -rf lib/${NAME}/* ${DESTDIR}${PREFIX}/lib
+	cp -rf share/${NAME}/* ${DESTDIR}${PREFIX}/share
 	chmod 755 ${DESTDIR}${PREFIX}/bin/${NAME}*
 	chmod -R 755 ${DESTDIR}${PREFIX}/lib/${NAME}
-	cp -f share/man/man1/${NAME}.1 ${DESTDIR}${MANPREFIX}/man1
+	cp -rf ${NAME}.1 ${DESTDIR}${MANPREFIX}/man1
 	chmod 644 ${DESTDIR}${MANPREFIX}/man1/${NAME}.1
 
 dist:
