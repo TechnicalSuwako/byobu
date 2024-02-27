@@ -1,7 +1,7 @@
 #!/bin/sh -e
 
 __disk_detail() {
-  if [ $(uname) = "FreeBSD" ]; then
+  if [ $(uname) = "FreeBSD" -o $(uname) = "Darwin" ]; then
     df -h
   else
     df -h -P
@@ -13,6 +13,9 @@ __disk() {
   if [ $(uname) = "FreeBSD" ]; then
     use=$(zpool list | tail -1 | awk '{ print $3 }')
     total=$(zpool list | tail -1 | awk '{ print $2 }')
+  elif [ $(uname) = "Darwin" ]; then
+    use=$(df -h "/" | tail -1 | awk '{ print $3 }' | sed 's/i$//')
+    total=$(df -h "/" | tail -1 | awk '{ print $2 }' | sed 's/i$//')
   else
     use=$(df -h "/" | tail -1 | awk '{ print $3 }')
     total=$(df -h "/" | tail -1 | awk '{ print $2 }')

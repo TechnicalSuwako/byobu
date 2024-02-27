@@ -4,6 +4,9 @@ __memory_detail() {
   if [ "$(uname)" = "OpenBSD" -o "$(uname)" = "FreeBSD" ]; then
     # OpenBSD / FreeBSD
     top -b -d 1
+  elif [ "$(uname)" = "Darwin" ]; then
+    # macOS
+    top -l 1 -s 0 -n 0 | grep PhysMem
   else
     # Linux
     free
@@ -36,6 +39,10 @@ __memory() {
       inactive_count=$(sysctl -n vm.stats.vm.v_inactive_count)
       free_mb=$((inactive_count * pagesize / 1024 / 1024))
       used_mb=$((total - free_mb))
+      ;;
+    Darwin)
+      total=$(printf "%.1f" "$(echo "$(sysctl -n hw.memsize_usable) / 1024 / 1024" | bc -l)")
+      used_mb=$(printf "%.1f" "$(echo "$(vm_stat | grep 'Pages active' | awk '{print $3}') * 4096 / (1024 * 1024)" | bc -l)")
       ;;
   esac
 

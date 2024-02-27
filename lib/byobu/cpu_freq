@@ -33,6 +33,16 @@ __cpu_freq() {
       freq="${hz}"
       unit="MHz"
     fi
+  elif cores=$(sysctl -n hw.ncpu 2>/dev/null) && hz=$(sysctl -n hw.cpufrequency | awk '{ printf "%.0f\n", $1 / 1000000 }' 2>/dev/null); then
+    # macOS
+    if [ "$hz" -ge "1000" ]; then
+      fpdiv $hz "1000" 1 # 1Ghz
+      freq="${_RET}"
+      unit="GHz"
+    else
+      freq="${hz}"
+      unit="MHz"
+    fi
   elif cores=$(sysctl -n hw.ncpuonline 2>/dev/null) && hz=$(sysctl -n hw.cpuspeed 2>/dev/null); then
     # OpenBSD
     if [ "$hz" -ge "1000" ]; then
