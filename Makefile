@@ -1,28 +1,27 @@
-UNAME_S := $(shell uname -s)
+UNAME_S!=uname -s
 
 NAME=byobu
-VERSION=5.3
+VERSION=5.3.1
 # Linux = /usr, FreeBSD/OpenBSD/macOS = /usr/local, NetBSD = /usr/pkg
 PREFIX=/usr/local
 MANPREFIX=${PREFIX}/share/man
-ifeq ($(UNAME_S),Linux)
+
+.if (${UNAME_S} == "Linux") || (${UNAME_S} == Illumos")
 	PREFIX=/usr
-endif
-ifeq ($(UNAME_S),Illumos)
-	PREFIX=/usr
-endif
-ifeq ($(UNAME_S),NetBSD)
+.elif ${UNAME_S} == "NetBSD"
 	PREFIX=/usr/pkg
-endif
-ifeq ($(UNAME_S),OpenBSD)
+.elif ${UNAME_S} == "OpenBSD"
 	MANPREFIX=${PREFIX}/man
-endif
+.endif
 
 install:
-	mkdir -p ${DESTDIR}${PREFIX}/{bin,lib/${NAME},share/${NAME},share/man/man1}
+	mkdir -p ${DESTDIR}${PREFIX}/bin
+	mkdir -p ${DESTDIR}${PREFIX}/lib
+	mkdir -p ${DESTDIR}${PREFIX}/share
+	mkdir -p ${DESTDIR}${MANPREFIX}/man1
 	cp -rf bin/* ${DESTDIR}${PREFIX}/bin
-	cp -rf lib/${NAME}/* ${DESTDIR}${PREFIX}/lib
-	cp -rf share/${NAME}/* ${DESTDIR}${PREFIX}/share
+	cp -rf lib/${NAME} ${DESTDIR}${PREFIX}/lib
+	cp -rf share/${NAME} ${DESTDIR}${PREFIX}/share
 	chmod 755 ${DESTDIR}${PREFIX}/bin/${NAME}*
 	chmod -R 755 ${DESTDIR}${PREFIX}/lib/${NAME}
 	cp -rf ${NAME}.1 ${DESTDIR}${MANPREFIX}/man1
@@ -30,7 +29,7 @@ install:
 
 dist:
 	mkdir ${NAME}-${VERSION}
-	cp -r README.md bin share lib Makefile CHANGELOG.md ${NAME}-${VERSION}
+	cp -r README.md bin share lib Makefile ${NAME}.1 CHANGELOG.md ${NAME}-${VERSION}
 	tar zcfv ${NAME}-${VERSION}.tar.gz ${NAME}-${VERSION}
 	rm -rf ${NAME}-${VERSION}
 

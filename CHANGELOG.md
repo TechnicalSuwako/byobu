@@ -1,3 +1,6 @@
+# 5.3.1
+* GNU MakeからBSD Makeに変更、そうしてMakefileの修正
+
 # 5.3
 * Makefileの修正
 * macOS対応
