@@ -4,8 +4,8 @@ __release() {
   local RELEASE="${RELEASE}"
   if [ -n "$RELEASE" ]; then
     true
-  elif [ "$(uname)" = "OpenBSD" ]; then
-    # OpenBSD
+  elif [ "$(uname)" = "OpenBSD" ] || [ "$(uname)" = "NetBSD" ]; then
+    # OpenBSD / NetBSD
     RELEASE=$(uname -r)
   elif [ "$(uname)" = "FreeBSD" ]; then
     # FreeBSD

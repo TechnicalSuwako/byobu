@@ -22,6 +22,23 @@ __bat() {
         status="-"
       fi
       ;;
+    NetBSD)
+      for i in $(seq 0 1); do
+        if envstat -d acpibat$i | grep -q 'present:[[:space:]]*TRUE'; then
+          batterynum=$i
+          break
+        fi
+      done
+      perc=$(envstat -d acpibat$batterynum | awk '/charge:/ {gsub(/[\(%\)]/, "", $6); printf "%d\n", $6}')
+      isadapter=$(envstat -d acpibat$batterynum | awk '/charging:/ {print $2}')
+      if [ "$isadapter" = "TRUE" ] && [ "$perc" -gt 98 ]; then
+        status="="
+      elif [ "$isadapter" = "TRUE" ] && [ "$perc" -lt 98 ]; then
+        status="+"
+      elif [ "$isbattery" = "FALSE" ]; then
+        status="-"
+      fi
+      ;;
     FreeBSD)
       ;;
     Darwin)

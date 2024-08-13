@@ -1,8 +1,8 @@
 #!/bin/sh -e
 
 __memory_detail() {
-  if [ "$(uname)" = "OpenBSD" -o "$(uname)" = "FreeBSD" ]; then
-    # OpenBSD / FreeBSD
+  if [ "$(uname)" = "OpenBSD" -o "$(uname)" = "FreeBSD" -o "$(uname)" = "NetBSD" ]; then
+    # OpenBSD / FreeBSD / NetBSD
     top -b -d 1
   elif [ "$(uname)" = "Darwin" ]; then
     # macOS
@@ -32,6 +32,10 @@ __memory() {
     OpenBSD)
       total=$(($(sysctl -n hw.physmem) / 1024 / 1024))
       used_mb=$(vmstat | tail -1 | awk '{print substr($3, 1, length($3)-1)}')
+      ;;
+    NetBSD)
+      total=$(($(sysctl -n hw.physmem64) / 1024 / 1024))
+      used_mb=$(($(vmstat | tail -1 | awk '{print substr($3, 1, length($3))}') / 1024))
       ;;
     FreeBSD)
       total=$(($(sysctl -n hw.realmem) / 1024 / 1024))

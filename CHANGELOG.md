@@ -1,7 +1,10 @@
 # 5.3.2
-* sndioとbatモジュールの追加（OpenBSDのみ）
-* disk、memory。cpu_freq、とcpu_tmpモジュールの修正
+* sndioモジュールの追加（OpenBSDのみ）
+* batモジュールの追加（現在、OpenBSDとNetBSDのみ）
+* disk、memory、cpu_freq、とcpu_tmpモジュールの修正
 * Makefileの修正
+* release、cpu_temp、ip_address、とmemoryモジュールで、NetBSD対応の追加
+* nbsd_audioモジュールの追加（NetBSDのみ）
 
 # 5.3.1
 * GNU MakeからBSD Makeに変更、そうしてMakefileの修正

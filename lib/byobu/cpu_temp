@@ -22,6 +22,10 @@ __cpu_temp_detail() {
 __cpu_temp() {
   local i t unit
   case "$(uname)" in
+    "NetBSD")
+      t=$(envstat | awk '/cpu.*temperature:/ && $3 != "N/A" {printf "%d\n", $3; exit}')
+      color b k Y; printf "%s%s" "$t" "℃ "; color --
+      ;;
     "OpenBSD")
       t=$(sysctl hw.sensors | grep -E 'hw.sensors.*temp' | awk '{ print $1 }' | head -1 | sed 's/^.*=//' | sed 's/\..*$//')
       color b k Y; printf "%s%s" "$t" "℃ "; color --

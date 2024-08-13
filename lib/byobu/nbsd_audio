@@ -1,0 +1,9 @@
+#!/bin/sh -e
+
+__nbsd_audio() {
+  local val=$(mixerctl -n outputs.master | sed 's/,.*$//')
+  local perc=$(echo "scale=2; ($val / 255) * 100" | bc)
+  local volume=$(printf "%d\n" "$(echo "$perc" | awk '{print int($1+0.5)}')")
+
+  color b y K; printf "%s\%" "$volume"; color --
+}
