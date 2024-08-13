@@ -20,7 +20,7 @@ __disk() {
     use=$(df -h "/" | tail -1 | awk '{ print $3 }')
     total=$(df -h "/" | tail -1 | awk '{ print $2 }')
   fi
-  color b m W; printf "%s/" "$use"; color -; color b m W; printf "%s" "$total"; color -;
+  color b m W; printf "%s%s/" "$use" "iB"; color -; color b m W; printf "%s%s" "$total" "iB"; color --;
 }
 
 # vi: syntax=sh ts=4 noexpandtab

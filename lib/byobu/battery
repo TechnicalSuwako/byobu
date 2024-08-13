@@ -1,39 +1,27 @@
 #!/bin/sh -e
-#
-#    battery: print the state of the battery
-#
-#    Copyright (C) 2009 Raphaël Pinson.
-#    Copyright (C) 2011-2014 Dustin Kirkland
-#
-#    Authors: Raphaël Pinson <raphink@ubuntu.com>
-#             Dustin Kirkland <kirkland@byobu.org>
-#
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, version 3 of the License.
-#
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
-#
-#    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 __battery_detail() {
-  local bat
-  for bat in /proc/acpi/battery/*; do
-	cat "$bat/info"
-	cat "$bat/state"
-  done
-  # FIXME: do the same thing with the /sys interface
+  if [ "$(uname)" == "OpenBSD" ]; then
+    apm -a
+  elif 
+    local bat
+    for bat in /proc/acpi/battery/*; do
+      cat "$bat/info"
+      cat "$bat/state"
+    done
+    # FIXME: do the same thing with the /sys interface
+  fi
 }
 
 __battery() {
   local bat line present sign state percent full rem color bcolor
-  # Linux support
-  present=""; full="0"; rem="0"; state=""
-  for bat in $BATTERY /sys/class/power_supply/* /proc/acpi/battery/*; do
+  # OpenBSD
+  if [ "$(uname)" == "OpenBSD" ]; then
+    $percent=$(apm -l)
+  elif [ "$(uname)" == "Linux" ]; then
+    # Linux support
+    present=""; full="0"; rem="0"; state=""
+    for bat in $BATTERY /sys/class/power_supply/* /proc/acpi/battery/*; do
 	case "$bat" in
 	  /sys/*)
 		if [ -r "$bat/uevent" ]; then
@@ -75,9 +63,10 @@ __battery() {
 		[ -n "$full" ] && [ -n "$rem" ] && [ -n "$state" ] && break
 		;;
 	esac
-  done
-  # Mac OS X support
-  if eval $BYOBU_TEST /usr/sbin/ioreg >/dev/null 2>&1; then
+    done
+  elif [ "$(uname)" == "Darwin" ]; then
+    # Mac OS X support
+    if eval $BYOBU_TEST /usr/sbin/ioreg >/dev/null 2>&1; then
 	# MacOS support
 	local key
 	for key in CurrentCapacity MaxCapacity ExternalChargeCapable FullyCharged; do
@@ -99,6 +88,7 @@ __battery() {
 		  ;;
 	  esac
 	done
+    fi
   fi
   if [ $rem -ge 0 ] && [ $full -gt 0 ]; then
 	percent=$(((100*$rem)/$full))

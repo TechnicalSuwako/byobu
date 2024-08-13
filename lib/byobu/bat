@@ -1,0 +1,32 @@
+#!/bin/sh -e
+
+__bat() {
+  local perc=0
+  local pmark="%"
+  local status="x" # "x" = 死亡, "-" = 放電, "+" = 充電, "=" = 満足
+  local isadapter=0
+  local isbattery=0
+
+  case "$(uname)" in
+    Linux)
+      ;;
+    OpenBSD)
+      perc=$(apm -l)
+      isadapter=$(apm -a)
+      isbattery=$(apm -b)
+      if [ $(($isadapter)) = 1 ] && [ $(($perc)) -gt 98 ]; then
+        status="="
+      elif [ $(($isadapter)) = 1 ] && [ $(($perc)) -lt 98 ]; then
+        status="+"
+      elif [ $(($isbattery)) = 1 ]; then
+        status="-"
+      fi
+      ;;
+    FreeBSD)
+      ;;
+    Darwin)
+      ;;
+  esac
+
+  color b g W; printf "%s %d%s" "$status" "$perc" "$pmark"; color --
+}

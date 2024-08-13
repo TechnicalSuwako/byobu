@@ -1,0 +1,7 @@
+#!/bin/sh -e
+
+__sndio() {
+  local volume=$(sndioctl output.level | awk -F '=' '{print int($2 * 100) "%"}')
+
+  color b y K; printf "%s" "$volume"; color --
+}

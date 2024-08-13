@@ -1,24 +1,20 @@
-UNAME_S!=uname -s
+UNAME_S != uname -s
 
-NAME=byobu
-VERSION=5.3.1
-# Linux = /usr, FreeBSD/OpenBSD/macOS = /usr/local, NetBSD = /usr/pkg
-PREFIX=/usr/local
+NAME = byobu
+VERSION = 5.3.2
+PREFIX = /usr/local
+.if ${UNAME_S} == "Linux" || ${UNAME_S} == "Illumos"
+PREFIX = /usr
+.endif
+
 MANPREFIX=${PREFIX}/share/man
-
-.if (${UNAME_S} == "Linux") || (${UNAME_S} == Illumos")
-PREFIX=/usr
-.elif ${UNAME_S} == "NetBSD"
-PREFIX=/usr/pkg
-.elif ${UNAME_S} == "OpenBSD"
+.if ${UNAME_S} == "OpenBSD"
 MANPREFIX=${PREFIX}/man
 .endif
 
-install:
-	mkdir -p ${DESTDIR}${PREFIX}/bin
-	mkdir -p ${DESTDIR}${PREFIX}/lib
-	mkdir -p ${DESTDIR}${PREFIX}/share
-	mkdir -p ${DESTDIR}${MANPREFIX}/man1
+all:
+	mkdir -p ${DESTDIR}${PREFIX}/bin ${DESTDIR}${PREFIX}/lib ${DESTDIR}${PREFIX}/share\
+		${DESTDIR}${MANPREFIX}/man1
 	cp -rf bin/* ${DESTDIR}${PREFIX}/bin
 	cp -rf lib/${NAME} ${DESTDIR}${PREFIX}/lib
 	cp -rf share/${NAME} ${DESTDIR}${PREFIX}/share
@@ -39,4 +35,4 @@ uninstall:
 		${DESTDIR}${PREFIX}/share/${NAME} \
 		${DESTDIR}${MANPREFIX}/man1/${NAME}.1
 
-.PHONY:install dist uninstall
+.PHONY: all dist uninstall

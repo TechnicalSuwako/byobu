@@ -1,3 +1,8 @@
+# 5.3.2
+* sndioとbatモジュールの追加（OpenBSDのみ）
+* disk、memory。cpu_freq、とcpu_tmpモジュールの修正
+* Makefileの修正
+
 # 5.3.1
 * GNU MakeからBSD Makeに変更、そうしてMakefileの修正
 

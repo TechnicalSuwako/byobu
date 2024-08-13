@@ -60,5 +60,5 @@ __memory() {
     unit_used="M"
   fi
 
-  color b g W; printf "%s%s" "$used_mb" "$unit_used"; color -; color b g W; printf "/%s%s" "$total" "$unit_total"; color --
+  color b b W; printf "%s%siB" "$used_mb" "$unit_used"; color -; color b b W; printf "/%s%siB" "$total" "$unit_total"; color --
 }

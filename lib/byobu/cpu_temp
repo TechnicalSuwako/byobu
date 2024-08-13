@@ -24,11 +24,11 @@ __cpu_temp() {
   case "$(uname)" in
     "OpenBSD")
       t=$(sysctl hw.sensors | grep -E 'hw.sensors.*temp' | awk '{ print $1 }' | head -1 | sed 's/^.*=//' | sed 's/\..*$//')
-      color b k Y; printf "%s" "$t"; color --
+      color b k Y; printf "%s%s" "$t" "℃ "; color --
       ;;
     "FreeBSD")
       t=$(sysctl dev.cpu | grep -E 'dev.cpu.*temperature' | awk '{ print $2 }' | head -1 | sed 's/\..*$/C/')
-      color b k Y; printf "%s" "$t"; color --
+      color b k Y; printf "%s%s" "$t" "℃ "; color --
       ;;
     "Linux")
       for i in $MONITORED_TEMP /sys/class/hwmon/hwmon*/device/temp*_input /sys/class/hwmon/hwmon*/temp*_input /proc/acpi/ibm/thermal /proc/acpi/thermal_zone/*/temperature /sys/class/thermal/thermal_zone*/temp; do
@@ -42,7 +42,7 @@ __cpu_temp() {
         esac
 
       if [ -n "$t" ] && [ "$t" -gt 0 ]; then
-        color b k Y; printf "%sC" "$t"; color --
+        color b k Y; printf "%s%s" "$t" "℃ "; color --
         break
       fi
     done
