@@ -14,8 +14,13 @@ __disk() {
     use=$(zpool list | tail -1 | awk '{ print $3 }')
     total=$(zpool list | tail -1 | awk '{ print $2 }')
   elif [ $(uname) = "Darwin" ]; then
-    use=$(df -h "/" | tail -1 | awk '{ print $3 }' | sed 's/i$//')
-    total=$(df -h "/" | tail -1 | awk '{ print $2 }' | sed 's/i$//')
+    free=$(diskutil info / | awk -F': ' '/Free Space/ {print $2}' | awk '{gsub(/[^0-9.]/, "", $1); print $1}')
+    total=$(diskutil info / | awk -F': ' '/Total Space/ {print $2}' | awk '{gsub(/[^0-9.]/, "", $1); print $1}')
+    funit=$(diskutil info / | grep "Free Space" | awk '{print $5}' | sed 's/B//')
+    tunit=$(diskutil info / | grep "Total Space" | awk '{print $5}' | sed 's/B//')
+    use=$(echo "$total - $free" | bc)
+    use=$(echo "$use $funit")
+    total=$(echo "$total $tunit")
   else
     use=$(df -h "/" | tail -1 | awk '{ print $3 }')
     total=$(df -h "/" | tail -1 | awk '{ print $2 }')

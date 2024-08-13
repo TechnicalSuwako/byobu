@@ -45,12 +45,15 @@ __cpu_temp() {
           ;;
         esac
 
-      if [ -n "$t" ] && [ "$t" -gt 0 ]; then
-        color b k Y; printf "%s%s" "$t" "℃ "; color --
-        break
-      fi
-    done
-    ;;
+        if [ -n "$t" ] && [ "$t" -gt 0 ]; then
+          color b k Y; printf "%s%s" "$t" "℃ "; color --
+          break
+        fi
+      done
+      ;;
+    "Darwin")
+      t=$(sysctl -n machdep.xcpm.cpu_thermal_level)
+      color b k Y; printf "%s%s" "$t" "℃ "; color --
   esac
 }
 

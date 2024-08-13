@@ -35,13 +35,22 @@ __bat() {
         status="="
       elif [ "$isadapter" = "TRUE" ] && [ "$perc" -lt 98 ]; then
         status="+"
-      elif [ "$isbattery" = "FALSE" ]; then
+      elif [ "$isadapter" = "FALSE" ]; then
         status="-"
       fi
       ;;
     FreeBSD)
       ;;
     Darwin)
+      perc=$(pmset -g batt | tail -1 | awk '{print $3}' | sed 's/%;//')
+      isadapter=$(pmset -g batt | head -1 | awk '{print $4}' | sed "s/'//")
+      if [ "$isadapter" = "AC" ] && [ "$perc" -gt 98 ]; then
+        status="="
+      elif [ "$isadapter" = "AC" ] && [ "$perc" -lt 98 ]; then
+        status="+"
+      elif [ "$isadapter" = "Battery" ]; then
+        status="-"
+      fi
       ;;
   esac
 
