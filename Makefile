@@ -7,11 +7,11 @@ PREFIX=/usr/local
 MANPREFIX=${PREFIX}/share/man
 
 .if (${UNAME_S} == "Linux") || (${UNAME_S} == Illumos")
-	PREFIX=/usr
+PREFIX=/usr
 .elif ${UNAME_S} == "NetBSD"
-	PREFIX=/usr/pkg
+PREFIX=/usr/pkg
 .elif ${UNAME_S} == "OpenBSD"
-	MANPREFIX=${PREFIX}/man
+MANPREFIX=${PREFIX}/man
 .endif
 
 install:
