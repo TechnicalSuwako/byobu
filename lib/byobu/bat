@@ -40,6 +40,15 @@ __bat() {
       fi
       ;;
     FreeBSD)
+      perc=$(apm -l)
+      isadapter=$(apm -a)
+      if [ "$isadapter" = 1 ] && [ "$perc" -gt 98 ]; then
+        status="="
+      elif [ "$isadapter" = 1 ] && [ "$perc" -lt 98 ]; then
+        status="+"
+      elif [ "$isadapter" = 0 ]; then
+        status="-"
+      fi
       ;;
     Darwin)
       perc=$(pmset -g batt | tail -1 | awk '{print $3}' | sed 's/%;//')

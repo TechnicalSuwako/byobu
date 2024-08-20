@@ -1,6 +1,6 @@
 # 5.3.2
 * sndioモジュールの追加（OpenBSDのみ）
-* batモジュールの追加（現在、OpenBSD、NetBSD、とmacOSのみ）
+* batモジュールの追加（現在、OpenBSD、NetBSD、macOS、FreeBSDのみ）
 * OpenBSDで、disk、memory、cpu_freq、とcpu_tempモジュールの修正
 * Makefileの修正
 * release、cpu_temp、ip_address、とmemoryモジュールで、NetBSD対応の追加
