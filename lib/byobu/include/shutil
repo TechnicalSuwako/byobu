@@ -192,6 +192,7 @@ status_freq() {
   case "$1" in
     apport)		_RET=67 ;;
     arch)		_RET=9999991 ;;
+    bat)	_RET=61 ;;
     battery)	_RET=61 ;;
     color)		_RET=9999991 ;;
     cpu_count)	_RET=5 ;;
@@ -208,9 +209,11 @@ status_freq() {
     ip_address)	_RET=127 ;;
     load_average)	_RET=2 ;;
     logo)		_RET=9999991 ;;
+    mac_audio)  _RET=5 ;;
     mail)		_RET=5 ;;
     memory)		_RET=13 ;;
     menu)		_RET=9999991 ;;
+    nbsd_audio)  _RET=4 ;;
     network)	_RET=3 ;;
     notify_osd)	_RET=9999991 ;;
     processes)	_RET=7 ;;
@@ -219,6 +222,7 @@ status_freq() {
     release)	_RET=599 ;;
     services)	_RET=53 ;;
     session)	_RET=9999991 ;;
+    sndio)  _RET=5 ;;
     swap)		_RET=19 ;;
     time)		_RET=9999991 ;;
     time_binary)	_RET=23 ;;
